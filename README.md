@@ -1,0 +1,2 @@
+# SMOOL
+SMart rOs schoOL
