@@ -15,7 +15,7 @@ from shutter.msg import Shutter
 
 class Smool(FloatLayout):
 
-    rospy.init_node('talker', anonymous=True)
+    rospy.init_node('shutter_control', anonymous=True)
     cmd_pub = rospy.Publisher('shutter/cmd', Shutter, queue_size=10)
 
     cmd = Shutter()
