@@ -38,8 +38,10 @@ ROS Nodes:
 QUICKSTART ROS
 
   Um alle ROS Nodes (control und slave) zu starten folgenden Befehl in Konsole eingeben:
+  
   $ roslaunch shutter shutter.launch
   
   Um nur Control ROS Node zu starten:
+  
    $ roslaunch shutter shutter_control.launch
     
