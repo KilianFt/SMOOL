@@ -1,7 +1,0 @@
-<launch>
-
-    <node name="ShutterControl" pkg="shutter" type="control_node" output="screen" />
-    
-    <node name="ShutterSlave" pkg="shutter" type="shutter_slave_node" />
-
-</launch>
