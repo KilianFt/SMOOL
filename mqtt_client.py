@@ -1,40 +1,53 @@
 import paho.mqtt.client as mqtt
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code " + str(rc))
-    #client.subscribe("$SYS/#")
-    client.subscribe("/shutter/cmd")
-    #client.publish("")
-    
-def on_message(client, userdata, msg):
-    cmd = int(msg.payload)
-    #print(cmd)
-    if not shutter_contol(cmd):
-        print("Failed to close shutter")
-        client.publish("/shutter/state", 0)
+class MQTTClient:
+    def __init__(self):
+        ip_address = "10.240.1.25"
+        port = 1883
+        
+        self.state_topic = "/shutter/state"
+        self.cmd_topic = "/shutter/cmd"
+        
+        self.client = mqtt.Client()
+        self.client.username_pw_set(username="fasw",password="fasw")
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+        self.client.connect(ip_address, port, 60)
 
-    
-def shutter_contol(wanted_state):
-    print("changing shutter state\n")
-    # do gpio here
-    _success = 0
-    
-    #print("MOVING...")
-    _success = 1
-    
-    # check if shutter closed
-    if _success == 1:
-        return True
-    else:
-        return False
+        self.client.loop_forever()
+        
+    def on_connect(self, client, userdata, flags, rc):
+        print("Connected with result code " + str(rc))
+        self.client.subscribe(self.cmd_topic)
+        
+    def on_message(self, client, userdata, msg):
+        cmd = msg.payload.decode()
+        #print(cmd)
+        state = self.shutter_contol(cmd)
 
+        
+    def shutter_contol(self, wanted_state):
+        #print("changing shutter state\n")
+        if wanted_state == "OPEN":
+            print("opening...")
+            self.client.publish("/shutter/state", "OFFEN")
+            # do GPIO here
+        elif wanted_state == "CLOSE":
+            print("closing...")
+            self.client.publish("/shutter/state", "ZU")
+            # do GPIO here
+        elif wanted_state == "STOP":
+            self.client.publish("/shutter/state", "ERROR")
+            # well, problem
+            print("stopping...")
+        else:
+            print("Unknown command")
+            return 0
+        
+        return 1
+        
     
-client = mqtt.Client()
-client.username_pw_set(username="fasw",password="fasw")
-client.on_connect = on_connect
-client.on_message = on_message
+if __name__ == "__main__":
+    MQTTClient()
 
-ip_address = "10.240.1.25"
-client.connect(ip_address, 1883, 60)
 
-client.loop_forever()
