@@ -3,45 +3,23 @@ SMart rOs schoOL
 
 Generic control system with GUI for different smart home features like controlling light and shutter
 
-
-Current state tutorial:
-
-LEDs repräsentieren Rollladen hoch oder runter
-
-Bis jetzt sind 2 Rollläden benutzbar:
+Potenzielle Pins für Rollläden:
   - LED auf GPIO Pin 14+15 für hoch/runter von Rollladen 1
   - LED auf GPIO Pin 16+17 für hoch/runter von Rollladen 2
-
-Systemd Service manual_control.service ist durchgehend am laufen (startet und restartet automatisch)
-Das heißt:
-
-  Durchgehender Button Control mit Buttons verbunden mit GPIO Pins 9-12.
-  - Button 9+10 für hoch/runter von Rollladen 1
-  - Button 11+12 für hoch/runter von Rollladen 2
-  Jeder klick sendet 5 Sekunden lang Signal an entsprechende LED (also an Pin OUT).
-  Keine Kontrolle ob Rollladen auf oder zu ist.
  
  
-ROS Nodes:
+## openhab
+openhab muss eingerichtet mit einem MQTT Broker eingerichtet, welcher auf der gleichen IP wie openhab läuft. 
+[openhab](https://www.openhab.org/)
+[MQTT auf openhab](https://www.youtube.com/watch?v=RWpH9KjFYxw)
 
-  Zwei ROS Nodes sind bis jetzt vorhanden:
-  - shutter_control.py
-    Besteht aus GUI zum kontrollieren aller Rollläden. Sollte auf Haupt-Kontroll-PC laufen.
-    Um alle Rollläden eines Gebäudes/Etage/Raum zu steuern "99" in entsprechendes Feld eintragen.
-    
-  - shutter_slave.py
-    Hört bis jetzt nur Signal von shutter_control.py zu und führt Befehl aus. 
-    Mit Überprüfung ob Rollladen schon oben/unten ist.
-    Jeder Befehl gibt (wie vorher) 5 Sekunden lang Strom auf entsprechenden PIN
-    
-    
-QUICKSTART ROS
+Dann können Things hinzugefügt werden, die auf einer MQTT Topic publishen oder subscriben.
+Hizugefügt sind bis jetzt drei Kontrol-Schalter: Hoch, Runter, Stop.
+Darunter sieht man eine Statusanzeige, welche vom MQTT client zurück geschickt wird.
 
-  Um alle ROS Nodes (control und slave) zu starten folgenden Befehl in Konsole eingeben:
-  
-  $ roslaunch shutter shutter.launch
-  
-  Um nur Control ROS Node zu starten:
-  
-   $ roslaunch shutter shutter_control.launch
-    
+## MQTT client script
+Das MQTT client script kann in der branch MQTT gefunden werden.
+
+Für die Anwendung später sollte das script automatisch gestartet werden, das kann durch folgendes gemacht werden:
+- systemd service
+- crontab
