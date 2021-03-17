@@ -1,9 +1,15 @@
 import paho.mqtt.client as mqtt
+import RPi.GPIO as GPIO
 
 class MQTTClient:
     def __init__(self):
         ip_address = "10.240.1.25"
         port = 1883
+
+        self.gpio_pins = [17,27,23,24]#[14,15,16,17]
+
+	    GPIO.setmode(GPIO.BCM)
+	    GPIO.setup(self.gpio_pins, GPIO.OUT, initial = 0)
         
         self.state_topic = "/shutter/state"
         self.cmd_topic = "/shutter/cmd"
@@ -25,6 +31,11 @@ class MQTTClient:
         #print(cmd)
         state = self.shutter_contol(cmd)
 
+    def activate(self, x):
+	    GPIO.output(x, True)
+	    sleep(5)
+	    GPIO.output(x, False)
+
         
     def shutter_contol(self, wanted_state):
         #print("changing shutter state\n")
@@ -32,17 +43,25 @@ class MQTTClient:
             print("opening...")
             self.client.publish("/shutter/state", "OFFEN")
             # do GPIO here
+            self.activate(self.gpio_pins[0])
+
         elif wanted_state == "CLOSE":
             print("closing...")
             self.client.publish("/shutter/state", "ZU")
             # do GPIO here
+            self.activate(self.gpio_pins[2])
+
         elif wanted_state == "STOP":
             self.client.publish("/shutter/state", "ERROR")
             # well, problem
             print("stopping...")
+            
+            # setting all to 0           
+            GPIO.output(self.gpio_pins, False)
+
         else:
             print("Unknown command")
-            return 0
+            return -1
         
         return 1
         
