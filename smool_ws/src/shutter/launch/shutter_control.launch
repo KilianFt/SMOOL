@@ -1,5 +1,0 @@
-<launch>
-
-	<node pkg="shutter" name="shutter_control" type="shutter_control.py" />
-
-</launch>
