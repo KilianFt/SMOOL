@@ -1,0 +1,5 @@
+<launch>
+
+	<node pkg="shutter" name="shutter_control" type="shutter_control.py" output="screen" />
+	<node pkg="shutter" name="shutter_slave" type="shutter_slave.py" />
+</launch>

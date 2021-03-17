@@ -1,0 +1,81 @@
+#:kivy 1.4.0
+
+<MyLabel@Label>:
+    font_size: 30
+    text_size: self.size
+    halign: 'left'
+    valign: 'middle'
+
+
+<MyTextInput@TextInput>:
+
+<Smool>:
+    checkBoxModeAll: checkbox_mode_all
+    checkBoxModeSeperate: checkbox_mode_seperate
+    checkBoxStateOpen: checkbox_state_open
+    checkBoxStateClose: checkbox_state_close
+
+    inputHouse: input_house
+    inputFloor: input_floor
+    inputRoom: input_room
+    inputShutter: input_shutter
+
+    GridLayout:
+        cols: 4
+
+        MyLabel:
+            text: 'Gebäude'
+
+        MyLabel:
+            text: 'Etage'
+
+        MyLabel:
+            text: 'Raum'
+
+        MyLabel:
+            text: 'Rollladen'
+
+        MyTextInput:
+            id: input_house
+
+        MyTextInput:
+            id: input_floor
+
+        MyTextInput:
+            id: input_room  
+
+        MyTextInput:
+            id: input_shutter    
+
+        MyLabel:
+            text: 'Alle'
+
+        CheckBox:
+            id: checkbox_mode_all
+            group: 'mode'
+
+        MyLabel:
+            text: 'Einzeln'
+
+        CheckBox:
+            id: checkbox_mode_seperate
+            group: 'mode'
+
+        MyLabel:
+            text: 'Öffnen'
+
+        CheckBox:
+            id: checkbox_state_open
+            group: 'state'
+
+        MyLabel:
+            text: 'Schließen'
+
+        CheckBox:
+            id: checkbox_state_close
+            group: 'state'
+        
+        Button:
+            id: button_execute
+            text: 'Ausführen'
+            on_release: root.execute()
