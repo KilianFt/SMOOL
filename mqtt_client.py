@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 import RPi.GPIO as GPIO
+from time import sleep
 
 class MQTTClient:
     def __init__(self):
@@ -7,9 +8,14 @@ class MQTTClient:
         port = 1883
 
         self.gpio_pins = [17,27,23,24]#[14,15,16,17]
+        #self.button_pins = [20,21]
 
-	    GPIO.setmode(GPIO.BCM)
-	    GPIO.setup(self.gpio_pins, GPIO.OUT, initial = 0)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.gpio_pins, GPIO.OUT, initial = 0)
+        #GPIO.setup(button_pins, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        
+        #GPIO.add_event_detect(self.button_pins[0], GPIO.FALLING, callback= (self.open_all))
+        #GPIO.add_event_detect(self.button_pins[1], GPIO.FALLING, callback= (self.close_all))
         
         self.state_topic = "/shutter/state"
         self.cmd_topic = "/shutter/cmd"
@@ -31,10 +37,18 @@ class MQTTClient:
         #print(cmd)
         state = self.shutter_contol(cmd)
 
+#    def open_all(self, channel):
+#        print('opening all')
+#        GPIO.output([self.gpio_pins[0], self.gpio_pins[2]], True)
+
+#    def close_all(self, channel):
+#        print('closing all')
+#        GPIO.output([self.gpio_pins[1], self.gpio_pins[3]], True)
+    
     def activate(self, x):
-	    GPIO.output(x, True)
-	    sleep(5)
-	    GPIO.output(x, False)
+        GPIO.output(x, True)
+        sleep(5)
+        GPIO.output(x, False)
 
         
     def shutter_contol(self, wanted_state):

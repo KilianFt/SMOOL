@@ -1,5 +1,5 @@
 [Unit]
-Description=Manual control via buttons
+Description=MQTT client python script for OPENHAB
 After=network.target
 StartLimitIntervalSec=0
 
@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=pi
-ExecStart=/usr/bin/python3 /home/pi/SMOOL/manual_control/manual_control.py
+ExecStart=/usr/bin/python3 /home/pi/SMOOL/mqtt_client.py
 
 
 [Install]
