@@ -1,10 +1,14 @@
 import paho.mqtt.client as mqtt
 import RPi.GPIO as GPIO
 from time import sleep
+import threading
+
+# TODO
+# add threading, so that multiple actions can take place on the same time
 
 class MQTTClient:
     def __init__(self):
-        ip_address = "10.240.1.25"
+        ip_address = "10.240.1.19"
         port = 1883
 
         self.gpio_pins = [17,27,23,24]#[14,15,16,17]
@@ -17,8 +21,16 @@ class MQTTClient:
         #GPIO.add_event_detect(self.button_pins[0], GPIO.FALLING, callback= (self.open_all))
         #GPIO.add_event_detect(self.button_pins[1], GPIO.FALLING, callback= (self.close_all))
         
-        self.state_topic = "/shutter/state"
-        self.cmd_topic = "/shutter/cmd"
+        #self.close_thread = threading.Thread(target=self.threaded_timer, args=(1,))
+        #self.open_thread = threading.Thread(target=self.threaded_timer, args=(2,))
+        #self.close_thread.start()
+        #self.open_thread.start()
+        
+        self.state_topic_1 = "/makerspace/shutter1/state"
+        self.cmd_topic_1 = "/makerspace/shutter1/cmd"
+
+        self.state_topic_2 = "/makerspace/shutter2/state"
+        self.cmd_topic_2 = "/makerspace/shutter2/cmd"
         
         self.client = mqtt.Client()
         self.client.username_pw_set(username="fasw",password="fasw")
@@ -30,47 +42,53 @@ class MQTTClient:
         
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
-        self.client.subscribe(self.cmd_topic)
+        self.client.subscribe(self.cmd_topic_1)
+        self.client.subscribe(self.cmd_topic_2)
         
     def on_message(self, client, userdata, msg):
         cmd = msg.payload.decode()
-        #print(cmd)
-        state = self.shutter_contol(cmd)
-
-#    def open_all(self, channel):
-#        print('opening all')
-#        GPIO.output([self.gpio_pins[0], self.gpio_pins[2]], True)
-
-#    def close_all(self, channel):
-#        print('closing all')
-#        GPIO.output([self.gpio_pins[1], self.gpio_pins[3]], True)
+        #print(msg)
+        state = self.shutter_contol(cmd, msg.topic)
     
+    def threaded_timer(self, x):
+        # not used yet
+        sleep(5)
+        print(x)
+        GPIO.output(17, False)
+        
     def activate(self, x):
         GPIO.output(x, True)
+        #self.open_thread.join(x)
         sleep(5)
         GPIO.output(x, False)
-
         
-    def shutter_contol(self, wanted_state):
-        #print("changing shutter state\n")
+    def shutter_contol(self, wanted_state, topic):
+        #print(topic)
+        #print(self.cmd_topic_1)
+        if topic == self.cmd_topic_1:
+            _up = 0
+            _down = 1
+            _state_topic = self.state_topic_1
+        elif topic == self.cmd_topic_2:
+            _up = 2
+            _down = 3
+            _state_topic = self.state_topic_2
+        else:
+            return -1
+            
         if wanted_state == "OPEN":
             print("opening...")
-            self.client.publish("/shutter/state", "OFFEN")
-            # do GPIO here
-            self.activate(self.gpio_pins[0])
+            self.activate(self.gpio_pins[_up])
+            self.client.publish(_state_topic, "OFFEN")
 
         elif wanted_state == "CLOSE":
             print("closing...")
-            self.client.publish("/shutter/state", "ZU")
-            # do GPIO here
-            self.activate(self.gpio_pins[2])
+            self.activate(self.gpio_pins[_down])            
+            self.client.publish(_state_topic, "ZU")
 
         elif wanted_state == "STOP":
-            self.client.publish("/shutter/state", "ERROR")
-            # well, problem
             print("stopping...")
-            
-            # setting all to 0           
+            self.client.publish(_state_topic, "STOP")           
             GPIO.output(self.gpio_pins, False)
 
         else:
@@ -82,5 +100,7 @@ class MQTTClient:
     
 if __name__ == "__main__":
     MQTTClient()
+
+
 
 
