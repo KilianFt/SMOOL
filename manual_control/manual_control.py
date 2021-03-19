@@ -19,18 +19,20 @@ class ManualControl:
         print('opening all')
         GPIO.output([self.gpio_pins[0], self.gpio_pins[2]], True)
         while GPIO.input(self.button_pins[0]) == GPIO.LOW:
-            GPIO.output([self.gpio_pins[0], self.gpio_pins[2]], True)
+            pass
+        GPIO.output([self.gpio_pins[0], self.gpio_pins[2]], False)
         #sleep(1)
 
     def close_all(self, channel):
         print('closing all')
         GPIO.output([self.gpio_pins[1], self.gpio_pins[3]], True)
         while GPIO.input(self.button_pins[1]) == GPIO.LOW:
-            GPIO.output([self.gpio_pins[1], self.gpio_pins[3]], True)
-    
+            pass
+        GPIO.output([self.gpio_pins[1], self.gpio_pins[3]], False)
+            
     def loop(self):
         while True:
-            sleep(1)
+            sleep(0.5)
             pass
         
         GPIO.cleanup()
