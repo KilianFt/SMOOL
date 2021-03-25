@@ -12,10 +12,13 @@ class MQTTClient:
         port = 1883
 
         self.gpio_pins = [17,27,23,24]#[14,15,16,17]
+        self.light_pins = [19,26]
+        
         #self.button_pins = [20,21]
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.gpio_pins, GPIO.OUT, initial = 0)
+        GPIO.setup(self.light_pins, GPIO.OUT, initial = 0)
         #GPIO.setup(button_pins, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
         #GPIO.add_event_detect(self.button_pins[0], GPIO.FALLING, callback= (self.open_all))
@@ -32,6 +35,9 @@ class MQTTClient:
         self.state_topic_2 = "/makerspace/shutter2/state"
         self.cmd_topic_2 = "/makerspace/shutter2/cmd"
         
+        self.light_cmd_topic_1 = "/makerspace/light1/cmd"
+        self.light_cmd_topic_2 = "/makerspace/light2/cmd"
+
         self.client = mqtt.Client()
         self.client.username_pw_set(username="fasw",password="fasw")
         self.client.on_connect = self.on_connect
@@ -42,8 +48,9 @@ class MQTTClient:
         
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
-        self.client.subscribe(self.cmd_topic_1)
-        self.client.subscribe(self.cmd_topic_2)
+        #self.client.subscribe(self.cmd_topic_1)
+        #self.client.subscribe(self.cmd_topic_2)"/makerspace
+        self.client.subscribe("/makerspace/#")
         
     def on_message(self, client, userdata, msg):
         cmd = msg.payload.decode()
@@ -62,6 +69,11 @@ class MQTTClient:
         sleep(5)
         GPIO.output(x, False)
         
+    def change_light(self, l_pin, new_state):
+        # probably gets 0 or 1 signale, then saving state here is not needed
+        GPIO.output(l_pin, new_state)
+        
+        
     def shutter_contol(self, wanted_state, topic):
         #print(topic)
         #print(self.cmd_topic_1)
@@ -73,6 +85,20 @@ class MQTTClient:
             _up = 2
             _down = 3
             _state_topic = self.state_topic_2
+        elif topic == self.light_cmd_topic_1:
+            #print(wanted_state)
+            if int(wanted_state) == 1:
+                new_state = True
+            else:
+                new_state = False
+            self.change_light(self.light_pins[0], new_state)
+        elif topic == self.light_cmd_topic_2:
+            if int(wanted_state) == 1:
+                new_state = True
+            else:
+                new_state = False
+            print(wanted_state)
+            self.change_light(self.light_pins[1], new_state)
         else:
             return -1
             

@@ -6,9 +6,11 @@ class ManualControl:
 
         self.gpio_pins = [17,27,23,24]#[14,15,16,17]
         self.button_pins = [20,21]
+        #self.light_pins = [19,26]
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.gpio_pins, GPIO.OUT, initial = 0)
+        #GPIO.setup(self.light_pins, GPIO.OUT, initial = 0)
         GPIO.setup(self.button_pins, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
         GPIO.add_event_detect(self.button_pins[0], GPIO.FALLING, callback= (self.open_all), bouncetime=300)
