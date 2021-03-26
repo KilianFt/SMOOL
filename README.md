@@ -34,17 +34,22 @@ Die Buttons sind für den Fall da, dass OpenHab nicht erreichbar ist. Mit ihnen 
  
  
 ## openhab
-openhab muss eingerichtet mit einem MQTT Broker eingerichtet, welcher auf der gleichen IP wie openhab läuft. 
+openhab muss mit einem MQTT Broker eingerichtet werden, welcher auf der gleichen IP wie openhab läuft. 
 [openhab](https://www.openhab.org/)
 [MQTT auf openhab](https://www.youtube.com/watch?v=RWpH9KjFYxw)
 
 Dann können Things hinzugefügt werden, die auf einer MQTT Topic publishen oder subscriben.
-Hizugefügt sind bis jetzt drei Kontrol-Schalter: Hoch, Runter, Stop.
-Darunter sieht man eine Statusanzeige, welche vom MQTT client zurück geschickt wird.
 
-## MQTT client script
-Das MQTT client script kann in der branch MQTT gefunden werden.
+## Scripts
+### MQTT client script
+Das MQTT client script kann in der branch MQTT gefunden werden. Es ist das Gegenstück zu OpenHab und soll dessen Kommandos ausführen.
 
-Für die Anwendung später sollte das script automatisch gestartet werden, das kann durch folgendes gemacht werden:
-- systemd service
-- crontab
+### Manual Control
+Dieses script funktioniert unabhängig von OpenHab und fährt mithilfe von Buttons alle Rollläden hoch oder runter.
+
+
+## Geplante Features
+- Logisch sicherstellen, dass Rollladen nicht gleichzeitig hoch und runter Kommando bekommen kann.
+- Licht auch unabhängig von OpenHab steuern können (extra Button?)
+- ISO image von Raspbian mit SMOOL erstellen
+- Config Dateien erstellen, zur einfachen Personalizierung
