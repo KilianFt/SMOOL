@@ -3,9 +3,34 @@ SMart schOOL
 
 Generic control system with GUI for different smart home features like controlling light and shutter
 
-Potenzielle Pins für Rollläden:
-  - LED auf GPIO Pin 14+15 für hoch/runter von Rollladen 1
-  - LED auf GPIO Pin 16+17 für hoch/runter von Rollladen 2
+## Quickstart
+Wenn der Raspberry Pi soweit konfiguriert ist, müssen nur die GPIO pins wie folgend angeschlossen werden:
+
+1. Rollläden verbinden 
+
+
+|   | Rollladen 1 | Rollladen 2  | Button (alle zusammen) |
+|---|---|---|---|
+| Hoch | GPIO17 | GPIO23 | GPIO20 |
+| Runter | GPIO27 | GPIO24 | GPIO21 |
+| Erdung | Beliebig | Beliebig | Beliebig |
+
+Die Erdung kann mit einem beliebigen Ground Pin am Raspberry Pi verbunden werden.  
+Die Buttons sind für den Fall da, dass OpenHab nicht erreichbar ist. Mit ihnen können alle Rollläden unabhängig von OpenHab geöffnet und geschlossen werden.
+
+2. Licht verbinden
+
+|   | Licht 1 |
+|---|---|
+| An/Aus | GPIO19 |
+| Erdung | Beliebig |
+
+## Neuen Raspi aufsetzen
+1. Repository clonen
+2. Systemd service erstellen
+3. GPIO Pins verbinden (siehe Quickstart)
+4. Sicherstellen, dass IP-Adressen stimmen
+5. SmartHome genießen
  
  
 ## openhab
